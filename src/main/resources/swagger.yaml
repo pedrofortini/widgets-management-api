@@ -1,0 +1,371 @@
+swagger: '2.0'
+info:
+  description: API responsible for mananging and monitoring a group of computers
+  version: 1.0.0
+  title: Monitor Machines API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: localhost:8080
+basePath: /machine-monitor-api/v1
+tags:
+  - name: Machine
+    description: Operations regarding the machines being monitored
+  - name: User
+    description: Operations regarding the users that acess the machines
+  - name: UserAcess
+    description: Operations regarding the acess of users to machines
+schemes:
+  - http
+paths:
+  /machines:
+    put:
+      tags:
+        - Machine
+      summary: Creates or edits data of a machine
+      operationId: saveMachine
+      consumes:
+        - "application/json"
+      parameters:
+        - in: body
+          name: machine
+          description: "Machine that is being saved"
+          required: true
+          schema:
+            $ref: '#/definitions/MachineRequest'
+      responses:
+        '200':
+          description: Machine data suscessfully saved
+        '500':
+          description: Internal error ocurred while saving machine
+        '400':
+          description: Invalid Machine Request Provided
+
+    get:
+      tags:
+        - Machine
+      summary: Gets monitoring data from all machines
+      operationId: getMachines
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: "Machine data suscessfully retrieved"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MachineResponse"
+        '500':
+          description: "Internal error ocurred while getting Machine data"
+        '400':
+          description: "Invalid Request"
+        '404':
+          description: "No Machines found"
+
+  /machines/{id}:
+    get:
+      tags:
+        - Machine
+      summary: "Find machine data by ID"
+      description: "Returns a single machine"
+      operationId: "getMachineById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of Machine to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/MachineDetailResponse"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Machine not found"
+
+  /users:
+    put:
+      tags:
+        - User
+      summary: Creates a user of a machine
+      operationId: saveUser
+      consumes:
+        - "application/json"
+      parameters:
+        - in: body
+          name: user
+          description: "User that is being saved"
+          required: true
+          schema:
+            $ref: '#/definitions/UserRequest'
+      responses:
+        '200':
+          description: User data suscessfully saved
+        '500':
+          description: Internal error ocurred while saving machine
+        '400':
+          description: Invalid User Request Provided
+        '409':
+          description: User already exists
+
+    get:
+      tags:
+        - User
+      summary: Gets data from all the Users
+      operationId: getUsers
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: "User data suscessfully retrieved"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/UserResponse"
+        '500':
+          description: "Internal error ocurred while getting User data"
+        '400':
+          description: "Invalid Request"
+        '404':
+          description: "No Users found"
+
+  /users/{login}:
+    get:
+      tags:
+        - User
+      summary: "Find User data by Login"
+      description: "Returns a single User"
+      operationId: "getUserByLogin"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "login"
+          in: "path"
+          description: "Login of User to return"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+
+  /users/acess/request:
+    put:
+      tags:
+        - UserAcess
+      summary: Requests a user to have acess to certain machine
+      operationId: saveUserAcessRequest
+      consumes:
+        - "application/json"
+      parameters:
+        - in: body
+          name: user
+          description: "User Acess Request data"
+          required: true
+          schema:
+            $ref: '#/definitions/UserAcessRequest'
+      responses:
+        '200':
+          description: Acess to Machine suscessfully saved
+        '500':
+          description: Internal error ocurred while saving acess request
+        '400':
+          description: Invalid User Request Provided
+        '409':
+          description: Acess already granted
+
+    delete:
+      tags:
+        - UserAcess
+      summary: Revokes the acess of a user to a certain machine
+      operationId: deleteUserAcessRequest
+      parameters:
+        - name: machineId
+          in: header
+          description: "Id of the machine"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: userLogin
+          in: header
+          required: true
+          type: string
+          description: "Login of the user"
+      responses:
+        '204':
+          description: Acess of user to machine sucessfully revoked
+        '500':
+          description: Internal error ocurred while deleting acess
+        '400':
+          description: Invalid Request Provided
+        '404':
+          description: Acess doesn't exists
+
+definitions:
+  MachineRequest:
+    type: object
+    required:
+      - name
+      - machine_is_up
+      - admin_user
+      - ip_address
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Id of the Machine
+      name:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      ip_address:
+        type: string
+        description: Ip Address of the Machine
+        minLength: 1
+      machine_is_up:
+        type: boolean
+        description: Flag indicating if the machine is running
+
+  MachineResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Id of the Machine
+      name:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      ip_address:
+        type: string
+        description: Ip Address of the Machine
+        minLength: 1
+      machine_is_up:
+        type: boolean
+        description: Flag indicating if the machine is running
+      last_downtime:
+        type: string
+        description: Last timestamp that this machine was down
+      admin_user:
+        type: string
+        description: Login of the Admin User of the Machine
+        minLength: 1
+
+  MachineDetailResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Id of the Machine
+      name:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      machine_is_up:
+        type: boolean
+        description: Flag indicating if the machine is running
+      ip_address:
+        type: string
+        description: Ip Address of the Machine
+        minLength: 1
+      last_downtime:
+        type: string
+        description: Last timestamp that this machine was down
+      admin_user:
+        type: string
+        description: Login of the Admin User of the Machine
+        minLength: 1
+      users_acess:
+        type: array
+        description: List of login of users that have acess to this machine
+        items:
+          type: string
+        uniqueItems: true
+      machine_events_log:
+        type: array
+        description: List of up and downtime events of this machine
+        items:
+          $ref: '#/definitions/MachineEventLogResponse'
+
+  MachineEventLogResponse:
+    type: object
+    required:
+      - type
+      - time_stamp
+    properties:
+      type:
+        type: string
+        description: Type of event
+        minLength: 1
+      time_stamp:
+        type: string
+        description: Timestamp of the event
+        minLength: 1
+
+  UserRequest:
+    type: object
+    required:
+      - login
+      - name
+    properties:
+      login:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      name:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+
+  UserResponse:
+    type: object
+    required:
+      - login
+      - name
+    properties:
+      login:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      name:
+        type: string
+        description: Name of the Machine
+        minLength: 1
+      machines_acess:
+        type: array
+        description: List of machine names the user have acess
+        items:
+          type: string
+        uniqueItems: true
+
+  UserAcessRequest:
+    type: object
+    required:
+      - login
+      - name
+      - is_user_admin
+    properties:
+      user_login:
+        type: string
+        description: Login of the user requesting acess
+        minLength: 1
+      machine_id:
+        type: integer
+        format: int64
+        description: Id of the machine the user is requesting acess to
+      is_user_admin:
+        type: boolean
+        description: Boolean consider if user is admin
+        minLength: 1
