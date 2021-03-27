@@ -3,13 +3,13 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.machine.monitor.api</groupId>
-	<artifactId>machine-monitor-system-api</artifactId>
+	<groupId>com.widgets.management.api</groupId>
+	<artifactId>widgets-management-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>machine-monitor-system-api</name>
-	<description>API responsible for mananging and monitoring a group of computers</description>
+	<name>widgets-management-api</name>
+	<description>API responsible for managing widgets used by customers on a board</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
