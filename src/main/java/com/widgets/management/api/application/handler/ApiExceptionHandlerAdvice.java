@@ -2,10 +2,9 @@ package com.widgets.management.api.application.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.widgets.management.api.application.exception.PersistenceException;
-import com.widgets.management.api.application.exception.ResourceAlreadyExistsException;
+import com.widgets.management.api.application.exception.InvalidRequestException;
 import com.widgets.management.api.application.exception.ResourceNotFoundException;
-import com.widgets.management.api.application.exception.UnprocessableEntityException;
+import com.widgets.management.api.application.exception.WidgetPersistenceException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +20,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 public class ApiExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleExcecaoGenerica(Exception exception) {
+    public ResponseEntity<?> handleGenericException(Exception exception) {
 
         Gson gsonBuilder = new GsonBuilder().create();
 
@@ -30,22 +29,12 @@ public class ApiExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 .body(gsonBuilder.toJson(exception.getMessage()));
     }
 
-    @ExceptionHandler(PersistenceException.class)
-    public ResponseEntity<?> handlePersistenceException(PersistenceException exception) {
+    @ExceptionHandler(WidgetPersistenceException.class)
+    public ResponseEntity<?> handlePersistenceException(WidgetPersistenceException exception) {
 
         Gson gsonBuilder = new GsonBuilder().create();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .body(gsonBuilder.toJson(exception.getMessage()));
-    }
-
-    @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<?> handleResourceAlreadyExistsException(ResourceAlreadyExistsException exception) {
-
-        Gson gsonBuilder = new GsonBuilder().create();
-
-        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(gsonBuilder.toJson(exception.getMessage()));
     }
@@ -60,12 +49,12 @@ public class ApiExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 .body(gsonBuilder.toJson(exception.getMessage()));
     }
 
-    @ExceptionHandler(UnprocessableEntityException.class)
-    public ResponseEntity<?> handleUnprocessableEnityException(UnprocessableEntityException exception) {
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<?> handleInvalidRequestException(InvalidRequestException exception) {
 
         Gson gsonBuilder = new GsonBuilder().create();
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(gsonBuilder.toJson(exception.getMessage()));
     }

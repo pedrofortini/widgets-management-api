@@ -1,4 +1,4 @@
-# Machine Monitor System
+# Widget Management API
 
 Application responsible for monitoring the usage of a group of computers, recording any downtime of the machines.
 The system also manages the creation of machines and users, and granting and revoking users acess to the machines.
@@ -52,7 +52,7 @@ is located on `/src/main/resources/swagger.yaml`, use [Swagger Editor](https://e
 
 The following figure is the ER Diagram for the system.
 
-![alt text](./src/main/resources/ER_Diagram.png "ER-Diagram")
+![alt text](./src/main/resources/Entity_Diagram.png "ER-Diagram")
 
 The system manages two Entities: Machines and Users. A user can have acess to 0 or more machines, and machines have 1 or 
 more Users who can acess them, this succumbs to a Many To Many relationship, maintained in the user_acess table. The 
