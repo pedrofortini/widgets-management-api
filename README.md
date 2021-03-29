@@ -60,8 +60,8 @@ The following figure is a Diagram for the Widget Entity.
 ![alt text](./src/main/resources/Entity_Diagram.png "ER-Diagram")
 
 Two persistence repositories where implemented, in-Memory and using a H2 SQL Database. The **control of which
-repository is used by the application is done by setting the spring.profiles.active field to either memory or sql
-on application.properties file**.
+repository is used** by the application is done by setting the **spring.profiles.active** field to either **memory** or **sql**
+on **application.properties** file.
 
 ### Backend API Design
 
